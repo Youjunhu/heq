@@ -1,2 +1,2 @@
 # heq
-tokamak equilibrium magnetic field reconstruction
+tokamak equilibrium reconstruction
