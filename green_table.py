@@ -30,7 +30,7 @@ def greenPsi(rp, zp, r, z):
 
 def greenBrz(rp, zp, r, z):
    dist = sqrt((z-zp)**2+(r-rp*cos_phi)**2+(rp*sin_phi)**2)
-   integral =  np.sum(rp*(z-zp)*sin_phi/dist**3)*dphi
+   integral =  np.sum(rp*(z-zp)*cos_phi/dist**3)*dphi
    integral2 = np.sum((rp**2-r*rp*cos_phi)/dist**3)*dphi
    return mu0/(4*pi)*integral, mu0/(4*pi)*integral2 #R,Z components
 
