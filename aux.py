@@ -225,18 +225,21 @@ def determine_lcfs_axis(r,z, first_wall, psi, nl = 400):
     psival = np.linspace(psi.min(), psi.max(), nl)
     cs = plt.contour(R, Z, psi, levels = psival)
     # Select out all the magnetic surfaces that do not touch the first wall
-    bdry = mpltPath.Path(np.asarray(first_wall))
+    bdry = mpltPath.Path(first_wall)
     xt = []
     yt = []
-    for i, conts in enumerate(cs.collections):
+    for i, conts in enumerate(cs.allsegs):
         xt.append([])
         yt.append([])
-        for path in conts.get_paths():
-            v = path.vertices
+        for path in conts:
+            if path.shape[0] == 0: break
+            v = path
+            #print('path.shape=',path.shape)
             inside = np.all(bdry.contains_points(v))
             if inside:
                 xt[i].append(v[:,0])
                 yt[i].append(v[:,1])
+
     # Select out the outmost contour (LCFS)
     tmp = 0
     for i, c in  enumerate(xt):
@@ -245,6 +248,7 @@ def determine_lcfs_axis(r,z, first_wall, psi, nl = 400):
          if t > tmp:
              tmp = t
              I, J = i, j
+
     # Select out the innermost contour (the magnetic axis)
     tmp=10**9        
     for i, c in  enumerate(xt):
@@ -278,13 +282,12 @@ def magnetic_surfaces(r,z,psi, levels0):
     yt = []
     psival = []
     # get all contours that do not touch the boundary (i.e., they are closed)
-    for i, conts in enumerate(cs.collections):
-        all_paths = conts.get_paths()
-        for path in all_paths:
-            points = path.vertices
-            if np.all(bdry.contains_points(points)):
-               xt.append(points[:,0])
-               yt.append(points[:,1])
+    for i, conts in enumerate(cs.allsegs):
+        for path in conts:
+            v = path
+            if np.all(bdry.contains_points(v)):
+               xt.append(v[:,0])
+               yt.append(v[:,1])
                psival.append(levels0[i])
     if flag==1:
         xt.reverse()
